@@ -80,11 +80,52 @@ async def paypal_request(method: str, path: str, payload: dict | None = None) ->
     return response.json() if response.content else {}
 
 
+
 def normalize_order(order: dict) -> dict:
     pu = (order.get("purchase_units") or [{}])[0]
-    amount = pu.get("amount", {})
-    return {"order_id": order.get("id"), "amount": float(amount.get("value", 0) or 0), "currency": amount.get("currency_code", "USD"), "status": order.get("status", "UNKNOWN"), "risk_flag": False, "description": pu.get("description", "PayPal Sandbox payment"), "updated_at": datetime.now(timezone.utc).isoformat(), "source": "paypal_sandbox"}
+    amount_data = pu.get("amount", {})
 
+    # Safely read transaction amount
+    try:
+        amount = float(amount_data.get("value", 0) or 0)
+    except (TypeError, ValueError):
+        amount = 0.0
+
+    currency = amount_data.get("currency_code", "USD")
+    status = order.get("status", "UNKNOWN")
+
+    # Transparent rules for manual review
+    review_reasons = []
+
+    if not order.get("id"):
+        review_reasons.append("Missing PayPal order ID")
+
+    if amount <= 0:
+        review_reasons.append("Invalid or zero transaction amount")
+
+    # Configurable high-value review threshold (USD)
+    try:
+        threshold = float(os.getenv("RISK_REVIEW_AMOUNT_USD", "500"))
+    except ValueError:
+        threshold = 500.0
+
+    if currency == "USD" and amount >= threshold:
+        review_reasons.append("High-value transaction requires review")
+
+    return {
+        "order_id": order.get("id"),
+        "amount": amount,
+        "currency": currency,
+        "status": status,
+        "risk_flag": bool(review_reasons),
+        "risk_reason": "; ".join(review_reasons) if review_reasons
+                       else "No configured review rule triggered",
+        "description": pu.get(
+            "description", "PayPal Sandbox payment"
+        ),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "source": "paypal_sandbox"
+    }
 @app.get("/", include_in_schema=False)
 async def home():
     return FileResponse(BASE_DIR / "static" / "index.html")

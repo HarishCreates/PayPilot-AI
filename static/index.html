@@ -1076,14 +1076,19 @@ function renderRisk() {
 
  const flagged = currentItems.filter(x => x.risk_flag);
 
- const lines = [
-  `Stored transactions: ${currentItems.length}`,
-  `Pending orders: ${pending.length}`,
-  `Rule-flagged records: ${flagged.length}`,
-  flagged.length
-   ? 'Review flagged records manually; a flag is not proof of fraud.'
-   : 'No records are currently marked for review by the stored risk flag.'
- ];
+
+const lines = [
+    `Stored transactions: ${currentItems.length}`,
+    `Pending orders: ${pending.length}`,
+    `Rule-flagged records: ${flagged.length}`,
+    flagged.length
+        ? 'Review flagged records manually; a flag is not proof of fraud.'
+        : 'No records are currently marked for review by the stored risk flag.',
+    ...flagged.map(x =>
+        `Order: ${x.order_id || 'Unknown'} | ${x.currency || 'USD'} ${Number(x.amount || 0).toFixed(2)} | Reason: ${x.risk_reason || 'Flagged for review'}`
+    )
+];
+
 
  $('riskDetails').textContent = lines.join('\n');
 }
