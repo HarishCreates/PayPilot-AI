@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PayPilot AI · Smart Finance</title>
+
+<style>
+:root {
+ --bg:#07111f;
+ --panel:#0d1b2d;
+ --panel2:#10223a;
+ --line:#21344e;
+ --text:#eef5ff;
+ --muted:#93a8c2;
+ --blue:#7c9cff;
+ --cyan:#4dd8e8;
+ --green:#45d6a0;
+ --amber:#ffc66d;
+ --red:#ff7e8b;
+}
+
+* { box-sizing:border-box; }
+
+body {
+ margin:0;
+ background:radial-gradient(ellipse at top left,#142b4b 0,transparent 38%),var(--bg);
+ color:var(--text);
+ font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;
+}
+
+button,input { font:inherit; }
+
+button {
+ cursor:pointer;
+ border:0;
+ border-radius:12px;
+ padding:11px 15px;
+ font-weight:700;
+ background:var(--blue);
+ color:#081326;
+}
+
+button.secondary {
+ background:#172a43;
+ color:var(--text);
+ border:1px solid var(--line);
+}
+
+button:disabled { opacity:.55; cursor:wait; }
+
+.shell {
+ display:grid;
+ grid-template-columns:230px 1fr;
+ min-height:100vh;
+}
+
+.sidebar {
+ padding:25px 16px;
+ border-right:1px solid var(--line);
+ background:#081525aa;
+}
+
+.brand {
+ display:flex;
+ align-items:center;
+ gap:10px;
+ font-weight:850;
+ font-size:18px;
+ margin:3px 8px 34px;
+}
+
+.logo {
+ display:grid;
+ place-items:center;
+ width:38px;
+ height:38px;
+ border-radius:13px;
+ background:linear-gradient(135deg,var(--blue),var(--cyan));
+ color:#07111f;
+ font-weight:900;
+}
+
+.navlabel {
+ font-size:10px;
+ letter-spacing:1.7px;
+ color:#627993;
+ margin:20px 12px 8px;
+}
+
+.nav {
+ display:flex;
+ gap:11px;
+ align-items:center;
+ padding:11px 12px;
+ border-radius:11px;
+ color:var(--muted);
+ margin:3px 0;
+}
+
+.nav.active {
+ color:var(--text);
+ background:#1b3150;
+}
+
+.nav span:first-child { width:18px; }
+
+.sidefoot {
+ position:sticky;
+ top:85vh;
+ margin:45px 8px 0;
+ color:var(--muted);
+ font-size:12px;
+}
+
+.main {
+ padding:30px clamp(16px,3vw,42px);
+ max-width:1600px;
+ width:100%;
+ margin:auto;
+}
+
+.top {
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:20px;
+ flex-wrap:wrap;
+ margin-bottom:27px;
+}
+
+.eyebrow {
+ color:var(--cyan);
+ font-size:11px;
+ font-weight:800;
+ letter-spacing:1.6px;
+}
+
+.h1 {
+ font-size:clamp(26px,3vw,36px);
+ font-weight:800;
+ letter-spacing:-1.2px;
+ margin:4px 0;
+}
+
+.sub { color:var(--muted); }
+
+.topright {
+ display:flex;
+ align-items:center;
+ gap:10px;
+ flex-wrap:wrap;
+}
+
+.pill {
+ border:1px solid var(--line);
+ background:#102039;
+ border-radius:999px;
+ padding:8px 11px;
+ color:var(--muted);
+ font-size:12px;
+}
+
+.dot {
+ display:inline-block;
+ width:7px;
+ height:7px;
+ border-radius:50%;
+ background:var(--green);
+ margin-right:6px;
+}
+
+.grid { display:grid; gap:16px; }
+
+.stats {
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ margin:22px 0;
+}
+
+.card {
+ border:1px solid var(--line);
+ border-radius:18px;
+ background:linear-gradient(150deg,#10213aee,#0b1929f2);
+ padding:20px;
+ min-width:0;
+}
+
+.stathead {
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ color:var(--muted);
+ font-size:12px;
+}
+
+.staticon {
+ width:34px;
+ height:34px;
+ display:grid;
+ place-items:center;
+ border:1px solid var(--line);
+ border-radius:11px;
+ color:var(--cyan);
+ font-size:17px;
+}
+
+.value {
+ font-size:clamp(23px,2.5vw,32px);
+ font-weight:800;
+ letter-spacing:-1px;
+ margin:15px 0 3px;
+}
+
+.trend { font-size:11px; color:var(--muted); }
+
+.two { grid-template-columns:1.3fr 1fr; }
+
+.sectionhead {
+ display:flex;
+ justify-content:space-between;
+ gap:12px;
+ align-items:center;
+ margin-bottom:16px;
+}
+
+.sectionhead h2 { font-size:16px; margin:0; }
+
+.sectionhead p {
+ margin:3px 0 0;
+ color:var(--muted);
+ font-size:12px;
+}
+
+.chart { height:190px; width:100%; display:block; }
+
+.legend {
+ display:flex;
+ gap:17px;
+ color:var(--muted);
+ font-size:11px;
+}
+
+.legend i {
+ display:inline-block;
+ width:7px;
+ height:7px;
+ border-radius:50%;
+ margin-right:5px;
+}
+
+.activity { display:grid; gap:14px; }
+
+.activityrow {
+ display:flex;
+ gap:11px;
+ align-items:center;
+}
+
+.activityicon {
+ width:34px;
+ height:34px;
+ border-radius:11px;
+ display:grid;
+ place-items:center;
+ background:#18324b;
+ color:var(--cyan);
+}
+
+.activityrow strong { display:block; font-size:12px; }
+.activityrow small { color:var(--muted); }
+
+.activityrow time {
+ margin-left:auto;
+ color:var(--muted);
+ font-size:11px;
+}
+
+.tablewrap { overflow:auto; }
+
+table {
+ border-collapse:collapse;
+ width:100%;
+ min-width:520px;
+}
+
+th,td {
+ text-align:left;
+ padding:13px 10px;
+ border-bottom:1px solid #1e3046;
+ white-space:nowrap;
+}
+
+th {
+ color:#7890ac;
+ font-size:10px;
+ letter-spacing:1px;
+ font-weight:700;
+}
+
+td { font-size:12px; }
+td:first-child { font-weight:700; }
+
+.status {
+ display:inline-flex;
+ align-items:center;
+ gap:6px;
+ border-radius:999px;
+ padding:5px 9px;
+ font-size:10px;
+ background:#15382f;
+ color:var(--green);
+}
+
+.status.pending {
+ background:#3b2d1c;
+ color:var(--amber);
+}
+
+.status.flag {
+ background:#3d2029;
+ color:var(--red);
+}
+
+.below { margin-top:16px; }
+
+.assistantbox {
+ display:grid;
+ grid-template-columns:1fr auto;
+ gap:10px;
+}
+
+.assistantbox input,.payform input {
+ width:100%;
+ background:#071526;
+ border:1px solid #2a405c;
+ color:var(--text);
+ border-radius:12px;
+ padding:12px 14px;
+ outline:none;
+}
+
+.assistantbox input:focus,.payform input:focus {
+ border-color:var(--blue);
+}
+
+/* AI answer panel */
+
+.answer {
+ margin-top:14px;
+ background:#081727;
+ border:1px solid #1d344e;
+ border-radius:12px;
+ padding:14px;
+ color:#c5d4e8;
+ white-space:pre-wrap;
+}
+
+.answer.markdown {
+ white-space:normal;
+ overflow-wrap:anywhere;
+ line-height:1.7;
+}
+
+.answer.markdown h1,
+.answer.markdown h2,
+.answer.markdown h3,
+.answer.markdown h4 {
+ color:var(--text);
+ line-height:1.3;
+ margin:18px 0 9px;
+}
+
+.answer.markdown h1 { font-size:22px; }
+.answer.markdown h2 { font-size:19px; }
+.answer.markdown h3 { font-size:16px; }
+.answer.markdown h4 { font-size:14px; }
+
+.answer.markdown p { margin:9px 0; }
+
+.answer.markdown ul,
+.answer.markdown ol {
+ padding-left:24px;
+ margin:9px 0;
+}
+
+.answer.markdown li { margin:5px 0; }
+.answer.markdown strong { color:#fff; }
+
+.answer.markdown code {
+ background:#142943;
+ border:1px solid #29425e;
+ border-radius:5px;
+ padding:2px 5px;
+ color:#9de7f0;
+}
+
+.answer.markdown pre {
+ background:#06111f;
+ border:1px solid #29425e;
+ border-radius:9px;
+ padding:12px;
+ overflow:auto;
+ white-space:pre-wrap;
+}
+
+.answer.markdown pre code {
+ background:none;
+ border:0;
+ padding:0;
+ color:#d8e7fa;
+}
+
+.answer.markdown .md-table-wrap {
+ overflow-x:auto;
+ margin:12px 0;
+}
+
+.answer.markdown table {
+ border-collapse:collapse;
+ width:100%;
+ min-width:360px;
+}
+
+.answer.markdown th,
+.answer.markdown td {
+ border:1px solid #29425e;
+ padding:9px 11px;
+ text-align:left;
+ white-space:normal;
+}
+
+.answer.markdown th {
+ background:#142943;
+ color:#a9c5e7;
+ font-size:11px;
+ letter-spacing:.3px;
+}
+
+.answer.markdown td { font-size:13px; }
+
+.answer.markdown blockquote {
+ margin:12px 0;
+ padding:8px 13px;
+ border-left:3px solid var(--cyan);
+ background:#10243a;
+ color:#b9cce3;
+}
+
+.answer.markdown hr {
+ border:0;
+ border-top:1px solid #29425e;
+ margin:16px 0;
+}
+
+.answer.markdown a {
+ color:#93c5fd;
+ text-decoration:underline;
+}
+
+.payform {
+ display:grid;
+ grid-template-columns:1fr 1.4fr auto;
+ gap:10px;
+}
+
+.notice {
+ color:var(--muted);
+ font-size:11px;
+ margin-top:12px;
+}
+
+.empty {
+ padding:25px;
+ text-align:center;
+ color:var(--muted);
+}
+
+.footer {
+ color:#617894;
+ font-size:11px;
+ text-align:center;
+ padding:28px;
+}
+
+.toast {
+ position:fixed;
+ bottom:20px;
+ right:20px;
+ max-width:380px;
+ background:#132b43;
+ border:1px solid #2c4c6d;
+ padding:13px 16px;
+ border-radius:12px;
+ display:none;
+ z-index:5;
+}
+
+.hidden { display:none!important; }
+
+@media(max-width:1000px) {
+ .stats { grid-template-columns:repeat(2,1fr); }
+ .two { grid-template-columns:1fr; }
+ .shell { grid-template-columns:1fr; }
+ .sidebar { display:none; }
+ .main { padding:22px 16px; }
+ .payform { grid-template-columns:1fr 1fr; }
+ .payform button { grid-column:1/-1; }
+}
+
+@media(max-width:550px) {
+ .stats { gap:9px; }
+ .card { padding:15px; }
+ .assistantbox { grid-template-columns:1fr; }
+ .payform { grid-template-columns:1fr; }
+ .payform button { grid-column:auto; }
+ .topright { width:100%; }
+}
+</style>
+</head>
+
+<body>
+<div class="shell">
+
+<aside class="sidebar">
+ <div class="brand">
+  <div class="logo">P</div>
+  <div>PayPilot <span style="color:var(--cyan)">AI</span></div>
+ </div>
+
+ <div class="navlabel">WORKSPACE</div>
+ <div class="nav active"><span>◫</span> Overview</div>
+ <a class="nav" href="#transactions" style="text-decoration:none"><span>↔</span> Transactions</a>
+ <a class="nav" href="#risk" style="text-decoration:none"><span>⬡</span> Risk monitor</a>
+ <a class="nav" href="#assistant" style="text-decoration:none"><span>✧</span> Smart assistant</a>
+
+ <div class="navlabel">SYSTEM</div>
+ <div class="nav"><span>⚙</span> Sandbox settings</div>
+
+ <div class="sidefoot">
+  PAYPILOT AI v2.0<br><br>
+  Built for responsible payment insights.
+ </div>
+</aside>
+
+<main class="main">
+
+<header class="top">
+ <div>
+  <div class="eyebrow">PAYMENT INTELLIGENCE PLATFORM</div>
+  <div class="h1">Your finance overview</div>
+  <div class="sub">A clearer view of payments, patterns, and operational risk.</div>
+ </div>
+
+ <div class="topright">
+  <span class="pill">
+   <i class="dot"></i>
+   <span id="connection">Checking backend…</span>
+  </span>
+  <span class="pill">PayPal Sandbox</span>
+  <button class="secondary" id="refreshBtn">↻ Refresh</button>
+ </div>
+</header>
+
+<section class="grid stats">
+ <div class="card">
+  <div class="stathead">Completed sales <span class="staticon">$</span></div>
+  <div class="value" id="sales">$0.00</div>
+  <div class="trend">Verified completed orders stored locally</div>
+ </div>
+
+ <div class="card">
+  <div class="stathead">Completed payments <span class="staticon">✓</span></div>
+  <div class="value" id="completed">0</div>
+  <div class="trend">Successful order captures</div>
+ </div>
+
+ <div class="card">
+  <div class="stathead">Pending payments <span class="staticon">◷</span></div>
+  <div class="value" id="pending">0</div>
+  <div class="trend">Orders needing a status check</div>
+ </div>
+
+ <div class="card">
+  <div class="stathead">Review signals <span class="staticon">⌁</span></div>
+  <div class="value" id="riskCount">0</div>
+  <div class="trend">Flags are review signals, not proof of fraud</div>
+ </div>
+</section>
+
+<section class="grid two">
+
+ <div class="card">
+  <div class="sectionhead">
+   <div>
+    <h2>Payment activity</h2>
+    <p>Recent stored transactions by status</p>
+   </div>
+   <span class="pill">Live local data</span>
+  </div>
+
+  <svg class="chart" id="chart" viewBox="0 0 620 190" preserveAspectRatio="none" role="img" aria-label="Transaction status chart">
+   <defs>
+    <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+     <stop offset="0" stop-color="#7c9cff" stop-opacity=".28"/>
+     <stop offset="1" stop-color="#7c9cff" stop-opacity="0"/>
+    </linearGradient>
+   </defs>
+
+   <path d="M30 145 H600 M30 105 H600 M30 65 H600 M30 25 H600" stroke="#20334b" stroke-dasharray="3 6" fill="none"/>
+   <path d="M30 140 C100 125 130 142 190 100 S290 110 350 75 S460 88 600 35 L600 170 L30 170Z" fill="url(#fill)"/>
+   <path d="M30 140 C100 125 130 142 190 100 S290 110 350 75 S460 88 600 35" fill="none" stroke="#7c9cff" stroke-width="3" stroke-linecap="round"/>
+
+   <text x="30" y="187" fill="#7088a5" font-size="10">Recent activity</text>
+   <text x="600" y="187" text-anchor="end" fill="#7088a5" font-size="10">Illustrative trend line</text>
+  </svg>
+
+  <div class="legend">
+   <span><i style="background:#7c9cff"></i>Activity visual</span>
+   <span>Counts below are from your actual records</span>
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="sectionhead">
+   <div>
+    <h2>Operations snapshot</h2>
+    <p>Quick checks from your local transaction store</p>
+   </div>
+  </div>
+
+  <div class="activity">
+   <div class="activityrow">
+    <div class="activityicon">✓</div>
+    <div><strong>Completed orders</strong><small id="completedNote">Waiting for data</small></div>
+   </div>
+
+   <div class="activityrow">
+    <div class="activityicon">◷</div>
+    <div><strong>Pending orders</strong><small id="pendingNote">Waiting for data</small></div>
+   </div>
+
+   <div class="activityrow">
+    <div class="activityicon">⌁</div>
+    <div><strong>Risk review</strong><small id="riskNote">Waiting for data</small></div>
+   </div>
+
+   <div class="activityrow">
+    <div class="activityicon">✧</div>
+    <div><strong>Assistant mode</strong><small id="aiMode">Checking mode…</small></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="card below" id="transactions">
+ <div class="sectionhead">
+  <div>
+   <h2>Recent transactions</h2>
+   <p>Payment records from PayPal Sandbox and local persistence</p>
+  </div>
+  <button class="secondary" id="exportBtn">Export CSV</button>
+ </div>
+
+ <div class="tablewrap">
+  <table>
+   <thead>
+    <tr>
+     <th>ORDER ID</th>
+     <th>AMOUNT</th>
+     <th>STATUS</th>
+     <th>RISK REVIEW</th>
+     <th>UPDATED</th>
+    </tr>
+   </thead>
+   <tbody id="transactionsBody">
+    <tr><td colspan="5" class="empty">Loading transaction records…</td></tr>
+   </tbody>
+  </table>
+ </div>
+
+ <div class="notice">
+  Only sandbox/test payments should be used for demos. No real money is processed by this configured Sandbox environment.
+ </div>
+</section>
+
+<section class="grid two below">
+
+ <div class="card" id="pay">
+  <div class="sectionhead">
+   <div>
+    <h2>Create a Sandbox payment</h2>
+    <p>Generate an order and approve it on PayPal's test checkout.</p>
+   </div>
+  </div>
+
+  <form id="payForm" class="payform">
+   <input id="amount" type="number" min="0.01" max="100000" step="0.01" value="19.99" required aria-label="Amount in USD">
+   <input id="description" maxlength="120" value="PayPilot demo payment" required aria-label="Payment description">
+   <button type="submit" id="payBtn">Create order ↗</button>
+  </form>
+
+  <div class="notice">Requires PayPal Sandbox credentials in your private .env file. The approval link opens PayPal Sandbox.</div>
+  <div id="payResult" class="answer hidden"></div>
+ </div>
+
+ <div class="card" id="risk">
+  <div class="sectionhead">
+   <div>
+    <h2>Risk monitor</h2>
+    <p>Transparent review signals for manual inspection</p>
+   </div>
+   <span class="pill">Rules + AI insight</span>
+  </div>
+
+  <div id="riskDetails" class="answer">Risk signals are being calculated…</div>
+  <div class="notice">This prototype does not train a fraud model or establish that a payment is fraudulent. Do not use it for production decisions.</div>
+ </div>
+
+</section>
+
+<section class="card below" id="assistant">
+
+ <div class="sectionhead">
+  <div>
+   <h2>✧ Smart payment assistant</h2>
+   <p>Ask questions about the transactions recorded in this demo.</p>
+  </div>
+  <span class="pill" id="assistantMode">Local mode available</span>
+ </div>
+
+ <form class="assistantbox" id="assistantForm">
+  <input id="question" maxlength="1000" placeholder="e.g. How many payments are completed? Which transactions need review?" required>
+  <button type="submit" id="askBtn">Ask assistant ↗</button>
+ </form>
+
+ <div class="answer" id="answer">
+  Hi! I can summarize completed sales, pending payments, transaction counts, and review flags. An optional Groq API key enables generative answers; otherwise, the local fallback works without a paid service.
+ </div>
+
+ <div class="notice" id="disclaimer">
+  Insights are informational and should be verified before making financial or operational decisions.
+ </div>
+
+</section>
+
+<div class="footer">
+ PayPilot AI · Hackathon prototype · PayPal Sandbox · Never commit API keys or secrets.
+</div>
+
+</main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let currentItems = [];
+let summary = {};
+
+function toast(msg) {
+ const el = $('toast');
+ el.textContent = msg;
+ el.style.display = 'block';
+ setTimeout(() => el.style.display = 'none', 3500);
+}
+
+function money(n) {
+ return '$' + Number(n || 0).toLocaleString('en-US', {
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+ });
+}
+
+function dateFmt(v) {
+ if (!v) return '—';
+ const d = new Date(v);
+ return Number.isNaN(d.getTime()) ? String(v) : d.toLocaleString();
+}
+
+function esc(s) {
+ return String(s ?? '').replace(/[&<>"']/g, c => ({
+  '&':'&amp;',
+  '<':'&lt;',
+  '>':'&gt;',
+  '"':'&quot;',
+  "'":'&#39;'
+ }[c]));
+}
+
+/*
+ Safe Markdown renderer.
+ Raw HTML is escaped before formatting.
+ Only HTML elements created by this function are inserted.
+*/
+
+function renderMarkdown(source) {
+
+ const lines = String(source ?? '')
+  .replace(/\r\n?/g, '\n')
+  .split('\n');
+
+ const out = [];
+ let i = 0;
+
+ const inline = value => {
+
+  let s = esc(value);
+  const code = [];
+
+  s = s.replace(/`([^`]+)`/g, (_, v) => {
+   const n = code.length;
+   code.push('<code>' + v + '</code>');
+   return `@@CODE${n}@@`;
+  });
+
+  s = s.replace(
+   /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+   (_, label, url) =>
+    `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`
+  );
+
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/__(.+?)__/g, '<strong>$1</strong>');
+  s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  s = s.replace(/~~(.+?)~~/g, '<del>$1</del>');
+
+  return s.replace(/@@CODE(\d+)@@/g, (_, n) => code[Number(n)] || '');
+ };
+
+ const tableLine = x => /^\s*\|.*\|\s*$/.test(x);
+
+ const divider = x =>
+  /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(x);
+
+ const cells = x =>
+  x.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(v => v.trim());
+
+ while (i < lines.length) {
+
+  const raw = lines[i];
+  const t = raw.trim();
+
+  if (!t) {
+   i++;
+   continue;
+  }
+
+  // Code blocks
+  if (/^```/.test(t)) {
+   i++;
+   const block = [];
+
+   while (i < lines.length && !/^\s*```/.test(lines[i])) {
+    block.push(lines[i++]);
+   }
+
+   if (i < lines.length) i++;
+
+   out.push('<pre><code>' + esc(block.join('\n')) + '</code></pre>');
+   continue;
+  }
+
+  // Markdown tables
+  if (i + 1 < lines.length && tableLine(raw) && divider(lines[i + 1])) {
+
+   const heads = cells(raw);
+   i += 2;
+
+   const rows = [];
+
+   while (i < lines.length && tableLine(lines[i])) {
+    rows.push(cells(lines[i++]));
+   }
+
+   out.push(
+    '<div class="md-table-wrap">' +
+    '<table><thead><tr>' +
+    heads.map(v => '<th>' + inline(v) + '</th>').join('') +
+    '</tr></thead><tbody>' +
+    rows.map(row =>
+     '<tr>' +
+     heads.map((_, j) => '<td>' + inline(row[j] ?? '') + '</td>').join('') +
+     '</tr>'
+    ).join('') +
+    '</tbody></table></div>'
+   );
+
+   continue;
+  }
+
+  // Headings
+  const heading = t.match(/^(#{1,4})\s+(.+)$/);
+
+  if (heading) {
+   const n = heading[1].length;
+   out.push(`<h${n}>${inline(heading[2])}</h${n}>`);
+   i++;
+   continue;
+  }
+
+  // Horizontal divider
+  if (/^([-*_])\1\1+\s*$/.test(t)) {
+   out.push('<hr>');
+   i++;
+   continue;
+  }
+
+  // Blockquotes
+  if (/^>\s?/.test(t)) {
+
+   const q = [];
+
+   while (i < lines.length && /^\s*>/.test(lines[i])) {
+    q.push(lines[i++].replace(/^\s*>\s?/, '').trim());
+   }
+
+   out.push('<blockquote>' + q.map(inline).join('<br>') + '</blockquote>');
+   continue;
+  }
+
+  // Lists
+  if (/^\s*[-*+]\s+/.test(raw) || /^\s*\d+[.)]\s+/.test(raw)) {
+
+   const ordered = /^\s*\d+[.)]\s+/.test(raw);
+   const tag = ordered ? 'ol' : 'ul';
+   const items = [];
+
+   while (i < lines.length) {
+
+    const m = lines[i].match(
+     ordered
+      ? /^\s*\d+[.)]\s+(.+)$/
+      : /^\s*[-*+]\s+(.+)$/
+    );
+
+    if (!m) break;
+
+    items.push('<li>' + inline(m[1]) + '</li>');
+    i++;
+   }
+
+   out.push(`<${tag}>${items.join('')}</${tag}>`);
+   continue;
+  }
+
+  // Paragraphs
+  const para = [t];
+  i++;
+
+  while (
+   i < lines.length &&
+   lines[i].trim() &&
+   !/^\s*(#{1,4}\s|```|>|[-*+]\s+|\d+[.)]\s+)/.test(lines[i]) &&
+   !(i + 1 < lines.length && tableLine(lines[i]) && divider(lines[i + 1]))
+  ) {
+   para.push(lines[i++].trim());
+  }
+
+  out.push('<p>' + para.map(inline).join('<br>') + '</p>');
+ }
+
+ return out.join('');
+}
+
+function statusClass(s) {
+ if (s === 'COMPLETED') return '';
+
+ if (['CREATED','APPROVED','PENDING','PAYER_ACTION_REQUIRED'].includes(s)) {
+  return 'pending';
+ }
+
+ return 'flag';
+}
+
+// Load dashboard data
+async function load() {
+
+ try {
+
+  const [s, h, t] = await Promise.all([
+   fetch('/dashboard/summary'),
+   fetch('/api/health'),
+   fetch('/api/transactions')
+  ]);
+
+  if (!s.ok || !h.ok || !t.ok) {
+   throw Error('Backend response was not successful');
+  }
+
+  summary = await s.json();
+
+  const health = await h.json();
+
+  currentItems = (await t.json()).items || [];
+
+  $('sales').textContent = money(summary.total_sales);
+  $('completed').textContent = summary.completed_count ?? 0;
+  $('pending').textContent = summary.pending_count ?? 0;
+  $('riskCount').textContent = summary.risk_count ?? 0;
+
+  $('connection').textContent =
+   health.paypal_configured
+    ? 'PayPal connected'
+    : 'Backend online · Sandbox setup needed';
+
+  $('aiMode').textContent =
+   health.ai_mode === 'groq'
+    ? 'Groq AI assistant'
+    : health.ai_mode === 'gemini'
+     ? 'Gemini generative assistant'
+     : 'Local assistant fallback';
+
+  $('assistantMode').textContent =
+   health.ai_mode === 'groq'
+    ? 'Groq AI enabled'
+    : health.ai_mode === 'gemini'
+     ? 'Gemini AI enabled'
+     : 'Free local mode';
+
+  $('completedNote').textContent =
+   `${summary.completed_count ?? 0} completed · ${money(summary.total_sales)} recorded`;
+
+  $('pendingNote').textContent =
+   `${summary.pending_count ?? 0} awaiting completion`;
+
+  $('riskNote').textContent =
+   (summary.risk_count ?? 0) === 0
+    ? 'No stored review flags'
+    : 'Manual review recommended for flagged records';
+
+  renderTable();
+  renderRisk();
+
+ } catch (e) {
+
+  $('connection').textContent = 'Backend unavailable';
+
+  $('transactionsBody').innerHTML =
+   '<tr><td colspan="5" class="empty">Could not load the backend. Start the server with: uvicorn main:app --reload</td></tr>';
+
+  toast('Could not connect to the local API. Is the FastAPI server running?');
+ }
+}
+
+// Transaction table
+function renderTable() {
+
+ const body = $('transactionsBody');
+
+ if (!currentItems.length) {
+
+  body.innerHTML =
+   '<tr><td colspan="5" class="empty">No transactions yet. Create a PayPal Sandbox order to start your demo.</td></tr>';
+
+  return;
+ }
+
+ body.innerHTML = currentItems.slice(0, 30).map(x => `
+  <tr>
+   <td>${esc(x.order_id || '—')}</td>
+   <td>${money(x.amount)} ${esc(x.currency || 'USD')}</td>
+   <td><span class="status ${statusClass(x.status)}">${esc(x.status || 'UNKNOWN')}</span></td>
+   <td>${x.risk_flag ? '<span class="status flag">Review</span>' : '<span style="color:var(--muted)">No flag</span>'}</td>
+   <td>${esc(dateFmt(x.updated_at))}</td>
+  </tr>
+ `).join('');
+}
+
+// Risk monitor
+function renderRisk() {
+
+ const pending = currentItems.filter(x =>
+  ['CREATED','APPROVED','PENDING','PAYER_ACTION_REQUIRED'].includes(x.status)
+ );
+
+ const flagged = currentItems.filter(x => x.risk_flag);
+
+ const lines = [
+  `Stored transactions: ${currentItems.length}`,
+  `Pending orders: ${pending.length}`,
+  `Rule-flagged records: ${flagged.length}`,
+  flagged.length
+   ? 'Review flagged records manually; a flag is not proof of fraud.'
+   : 'No records are currently marked for review by the stored risk flag.'
+ ];
+
+ $('riskDetails').textContent = lines.join('\n');
+}
+
+// Refresh
+$('refreshBtn').addEventListener('click', load);
+
+// PayPal Sandbox order creation
+$('payForm').addEventListener('submit', async e => {
+
+ e.preventDefault();
+
+ const btn = $('payBtn');
+
+ btn.disabled = true;
+ btn.textContent = 'Creating…';
+
+ $('payResult').classList.remove('hidden');
+ $('payResult').textContent = 'Contacting PayPal Sandbox…';
+
+ try {
+
+  const r = await fetch('/paypal/create-order', {
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    amount:Number($('amount').value),
+    description:$('description').value
+   })
+  });
+
+  const d = await r.json();
+
+  if (!r.ok) {
+   throw Error(d.detail || 'Could not create order');
+  }
+
+  $('payResult').innerHTML = `
+   Order created: <strong>${esc(d.order_id)}</strong> · status ${esc(d.status)}<br><br>
+   ${d.approval_url
+    ? `<a href="${esc(d.approval_url)}" target="_blank" rel="noopener" style="color:#93c5fd">Open PayPal Sandbox approval ↗</a>`
+    : 'No approval link was returned by PayPal.'}
+   <br><br>After approval, PayPal returns to this app and the order is captured.
+  `;
+
+  await load();
+
+ } catch (err) {
+
+  $('payResult').textContent = err.message;
+  toast(err.message);
+
+ } finally {
+
+  btn.disabled = false;
+  btn.textContent = 'Create order ↗';
+ }
+});
+
+// Groq AI assistant
+$('assistantForm').addEventListener('submit', async e => {
+
+ e.preventDefault();
+
+ const btn = $('askBtn');
+
+ btn.disabled = true;
+ btn.textContent = 'Thinking…';
+
+ $('answer').textContent = 'Reviewing the stored transaction records…';
+
+ try {
+
+  const r = await fetch('/api/assistant', {
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    question:$('question').value
+   })
+  });
+
+  const d = await r.json();
+
+  if (!r.ok) {
+   throw Error(d.detail || 'Assistant request failed');
+  }
+
+  // Render AI Markdown safely
+  $('answer').innerHTML = renderMarkdown(d.answer);
+  $('answer').classList.add('markdown');
+
+  $('assistantMode').textContent =
+   d.mode === 'groq'
+    ? 'Groq AI'
+    : d.mode === 'gemini'
+     ? 'Gemini AI'
+     : 'Local fallback';
+
+  $('disclaimer').textContent =
+   d.disclaimer || 'Verify important decisions.';
+
+ } catch (err) {
+
+  $('answer').textContent = err.message;
+
+ } finally {
+
+  btn.disabled = false;
+  btn.textContent = 'Ask assistant ↗';
+ }
+});
+
+// Export transactions as CSV
+$('exportBtn').addEventListener('click', () => {
+
+ if (!currentItems.length) {
+  toast('No transactions to export yet.');
+  return;
+ }
+
+ const cols = [
+  'order_id',
+  'amount',
+  'currency',
+  'status',
+  'risk_flag',
+  'updated_at'
+ ];
+
+ const csv = [
+  cols.join(','),
+  ...currentItems.map(x =>
+   cols.map(k =>
+    '"' + String(x[k] ?? '').replace(/"/g, '""') + '"'
+   ).join(',')
+  )
+ ].join('\r\n');
+
+ const a = document.createElement('a');
+
+ a.href = URL.createObjectURL(
+  new Blob([csv], {type:'text/csv;charset=utf-8;'})
+ );
+
+ a.download = 'paypilot-transactions.csv';
+ a.click();
+
+ URL.revokeObjectURL(a.href);
+});
+
+// Initial dashboard load
+load();
+
+</script>
+</body>
+</html>
